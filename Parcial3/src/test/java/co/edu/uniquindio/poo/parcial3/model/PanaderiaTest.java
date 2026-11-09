@@ -141,4 +141,80 @@ public class PanaderiaTest {
         assertEquals(120, lucia.getMinutosDisponibles());
     }
     //Test 7
+    @Test
+    public void cancelarPrimerPedidoDeDosAsignados() {
+
+        Panaderia panaderia = new Panaderia("Mi Panaderia");
+
+        Cliente cliente = new Cliente("Juan", "12345");
+
+        PanaderoIndustrial carlos = new PanaderoIndustrial("Carlos", "111", panaderia, 120, "I01");
+
+        panaderia.registrarEmpleado(carlos);
+
+        panaderia.registrarPedido("P01", cliente, TipoPan.TRADICIONAL, 25);
+        panaderia.registrarPedido("P02", cliente, TipoPan.TRADICIONAL, 25);
+
+        panaderia.asignarPedido("P01");
+        panaderia.asignarPedido("P02");
+
+        panaderia.cancelarPedido("P01");
+
+        Pedido pedido1 = panaderia.buscarPedido("P01").orElseThrow();
+        Pedido pedido2 = panaderia.buscarPedido("P02").orElseThrow();
+
+        assertEquals(EstadoDelPedido.CANCELADO, pedido1.getEstado());
+        assertEquals(EstadoDelPedido.ASIGNADO, pedido2.getEstado());
+        assertEquals(45, pedido1.getMinutosReservados());
+        assertEquals(45, pedido2.getMinutosReservados());
+        assertEquals(75, carlos.getMinutosDisponibles());
+    }
+    //Test 8
+    @Test
+    public void cancelarPedidoPendiente() {
+
+        Panaderia panaderia = new Panaderia("Mi Panaderia");
+
+        Cliente cliente = new Cliente("Juan", "12345");
+
+        PanaderoIndustrial carlos = new PanaderoIndustrial("Carlos", "111", panaderia, 100, "I01");
+
+        panaderia.registrarEmpleado(carlos);
+
+        panaderia.registrarPedido("P01", cliente, TipoPan.TRADICIONAL, 25);
+
+        panaderia.cancelarPedido("P01");
+
+        Pedido pedido = panaderia.buscarPedido("P01").orElseThrow();
+
+        assertEquals(EstadoDelPedido.CANCELADO, pedido.getEstado());
+        assertEquals(1, panaderia.consultarHistorialPedidos().size());
+        assertEquals(100, carlos.getMinutosDisponibles());
+    }
+    //Test 9
+    @Test
+    public void cancelarDosVecesElMismoPedido() {
+
+        Panaderia panaderia = new Panaderia("Mi Panaderia");
+
+        Cliente cliente = new Cliente("Juan", "12345");
+
+        PanaderoIndustrial carlos = new PanaderoIndustrial("Carlos", "111", panaderia, 120, "I01");
+
+        panaderia.registrarEmpleado(carlos);
+
+        panaderia.registrarPedido("P01", cliente, TipoPan.TRADICIONAL, 25);
+
+        panaderia.asignarPedido("P01");
+
+        panaderia.cancelarPedido("P01");
+
+        assertThrows(IllegalStateException.class, () ->
+                panaderia.cancelarPedido("P01"));
+
+        Pedido pedido = panaderia.buscarPedido("P01").orElseThrow();
+
+        assertEquals(EstadoDelPedido.CANCELADO, pedido.getEstado());
+        assertEquals(120, carlos.getMinutosDisponibles());
+    }
 }
