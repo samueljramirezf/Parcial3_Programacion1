@@ -11,6 +11,11 @@ public class Empleado extends Persona{
         this.minutosDisponibles = minutosDisponibles;
         this.codigo = codigo;
     }
+    public boolean tieneMinutos(int minutos);
+
+    public void reservarMinutos(int minutos);
+
+    public void devolverMinutos(int minutos);
 
     public String getCodigo() {
         return codigo;
@@ -34,5 +39,19 @@ public class Empleado extends Persona{
 
     public void setOwnedByPanderia(Panaderia ownedByPanderia) {
         this.ownedByPanderia = ownedByPanderia;
+    }
+
+    public boolean tieneMinutos(int minutos) {
+        return minutos > 0 && minutosDisponibles >= minutos;
+    }
+    public void reservarMinutos(int minutos) {
+        if (tieneMinutos(minutos)) {
+            minutosDisponibles -= minutos;
+        }
+    }
+    public void devolverMinutos(int minutos) {
+        if (minutos > 0) {
+            minutosDisponibles += minutos;
+        }
     }
 }

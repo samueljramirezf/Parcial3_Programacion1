@@ -40,4 +40,8 @@ public class Panaderia {
     public void setListaDeEmpleados(ArrayList<Empleado> listaDeEmpleados) {
         this.listaDeEmpleados = listaDeEmpleados;
     }
+
+
+
+
 }
