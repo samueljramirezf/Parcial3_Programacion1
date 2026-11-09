@@ -8,9 +8,10 @@ public class Pedido {
     private int minutosReservados;
     private Cliente cliente;
     private Empleado panaderoAsignado;
-    Panaderia ownedByPanaderia;
+    private Panaderia ownedByPanaderia;
 
-    public Pedido(String codigo, Cliente cliente, TipoPan tipoPan, int cantidad) {
+    public Pedido(String codigo, Cliente cliente, TipoPan tipoPan, int cantidad, Panaderia ownedByPanaderia) {
+        validarCantidad(cantidad);
         this.codigo = codigo;
         this.cliente = cliente;
         this.tipoPan = tipoPan;
@@ -19,6 +20,44 @@ public class Pedido {
         this.minutosReservados = 0;
         this.panaderoAsignado = null;
         this.ownedByPanaderia = ownedByPanaderia;
+    }
+
+    /**
+     * Asigna el pedido a un panadero y le reserva los minutos.
+     * Valida todo antes de modificar: si algo falla, ni el pedido ni el empleado cambian.
+     */
+    public void asignar(Empleado panadero, int minutos) {
+        if (estado != EstadoDelPedido.PENDIENTE) {
+            throw new IllegalStateException("Solo se puede asignar un pedido PENDIENTE; el pedido " + codigo + " está " + estado);
+        }
+        if (!(panadero instanceof Panadero)) {
+            throw new IllegalArgumentException("El pedido solo se puede asignar a un panadero");
+        }
+        // Lanza IllegalArgumentException o IllegalStateException sin modificar al empleado.
+        panadero.reservarMinutos(minutos);
+        this.panaderoAsignado = panadero;
+        this.minutosReservados = minutos;
+        this.estado = EstadoDelPedido.ASIGNADO;
+    }
+
+    /**
+     * Cancela el pedido. Si estaba ASIGNADO, devuelve al panadero exactamente los minutos reservados.
+     * El panadero y los minutos reservados se conservan como registro en el historial.
+     */
+    public void cancelar() {
+        if (estado == EstadoDelPedido.CANCELADO) {
+            throw new IllegalStateException("El pedido " + codigo + " ya está CANCELADO");
+        }
+        if (estado == EstadoDelPedido.ASIGNADO) {
+            panaderoAsignado.devolverMinutos(minutosReservados);
+        }
+        this.estado = EstadoDelPedido.CANCELADO;
+    }
+
+    private static void validarCantidad(int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor que cero");
+        }
     }
 
 
@@ -35,6 +74,7 @@ public class Pedido {
     }
 
     public void setCantidad(int cantidad) {
+        validarCantidad(cantidad);
         this.cantidad = cantidad;
     }
 
