@@ -30,4 +30,33 @@ public class PanaderiaTest {
         assertEquals(minutosIniciales1, cajero1.getMinutosDisponibles());
         assertEquals(minutosIniciales2, cajero2.getMinutosDisponibles());
     }
+    @Test
+    public void registrarPedidoConCodigoCancelado() {
+
+        Panaderia panaderia = new Panaderia("Mi Panaderia");
+        Cliente cliente = new Cliente("Juan", "12345");
+
+        panaderia.registrarPedido("P01", cliente, TipoPan.TRADICIONAL, 25);
+
+        panaderia.cancelarPedido("P01");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                panaderia.registrarPedido("P01", cliente, TipoPan.TRADICIONAL, 15));
+
+        assertEquals(1, panaderia.consultarHistorialPedidos().size());
+        assertEquals(EstadoDelPedido.CANCELADO,
+                panaderia.buscarPedido("P01").orElseThrow().getEstado());
+    }
+    @Test
+    public void registrarPedidoConCantidadCero() {
+
+        Panaderia panaderia = new Panaderia("Mi Panaderia");
+        Cliente cliente = new Cliente("Juan", "12345");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                panaderia.registrarPedido("P02", cliente, TipoPan.TRADICIONAL, 0));
+
+        assertTrue(panaderia.consultarHistorialPedidos().isEmpty());
+    }
+
 }
