@@ -3,11 +3,11 @@ package co.edu.uniquindio.poo.parcial3.model;
 public class Empleado extends Persona{
     private String codigo;
     private int minutosDisponibles;
-    Panaderia ownedByPanderia;
+    Panaderia ownedByPanaderia;
 
     public Empleado(String nombre, String documento, Panaderia ownedByPanderia, int minutosDisponibles, String codigo) {
         super(nombre, documento);
-        this.ownedByPanderia = ownedByPanderia;
+        this.ownedByPanaderia = ownedByPanaderia;
         this.minutosDisponibles = minutosDisponibles;
         this.codigo = codigo;
     }
@@ -28,11 +28,11 @@ public class Empleado extends Persona{
         this.minutosDisponibles = minutosDisponibles;
     }
 
-    public Panaderia getOwnedByPanderia() {
-        return ownedByPanderia;
+    public Panaderia getOwnedByPanaderia() {
+        return ownedByPanaderia;
     }
 
-    public void setOwnedByPanderia(Panaderia ownedByPanderia) {
-        this.ownedByPanderia = ownedByPanderia;
+    public void setOwnedByPanaderia(Panaderia ownedByPanaderia) {
+        this.ownedByPanaderia = ownedByPanaderia;
     }
 }
